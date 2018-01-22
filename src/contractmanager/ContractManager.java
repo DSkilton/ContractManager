@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 package contractmanager;
-import java.util.Scanner; 
-import java.io.*;
+import java.util.Scanner;
 import java.util.Calendar;
+import java.util.InputMismatchException;
 import java.text.SimpleDateFormat;
 
 
@@ -22,9 +22,9 @@ public class ContractManager {
     //scanner
     static Scanner sc = new Scanner (System.in);
        
-    public static void main(String[] args) { 
+    public static void main(String[] args) {
         welcome();
-        getFirstName();
+/*        getFirstName();
         getSecondName();
         getReference(); 
         getInternationalCalls();
@@ -32,7 +32,7 @@ public class ContractManager {
         getDataBundle(); 
         getContractLength(); 
         confirmDetails();
-    }
+*/    }
     
     //welcome menu
     static void welcome(){
@@ -46,32 +46,36 @@ public class ContractManager {
                 + "0. Exit \n" );
         int iChoice = sc.nextInt();
             //sMinsInput = sMinsInput.toLowerCase(); 
-
+        try{
             if (iChoice == 1){ 
                 getFirstName();
-            }
-            else if (iChoice == 2){
-                displaySummary(); 
-            } 
-            
-            else if (iChoice == 3){
-                //checkFile();
-            }
-            
-            else if (iChoice == 0) {
-                System.exit(0);
-            }
-            else {
+                }else if (iChoice == 2){
+                    displaySummary(); 
+                }else if (iChoice == 3){
+                    selectedMonthSummary();
+                }else if (iChoice ==4) {
+                    searchReferenceAndName();
+                }else if (iChoice == 0) {
+                    System.exit(0);
+            // initial attempt at error checking. Doesn't work for letters
+            }else if (iChoice != 1-3 && iChoice !=0){
                 System.out.println("Enter number between 1 and 3");
                 welcome();
             }        
+        }
+        //2nd attempt at catching text being entered rather than a number. Does not work for letters
+        catch (InputMismatchException e){
+            sc.next();
+            System.out.println("Please enter numbers between 1-3 or 0 to exit");
+            welcome();
+        }
 }//end of class
 
     //get client name 
     static void getFirstName() {
         String sFirstName = " ";
         System.out.println("Please enter Client's first name"); 
-        
+        // user can check their own input 
         sFirstName = sc.next().toUpperCase();
         System.out.println("\n"
                     + "You wrote " 
@@ -81,7 +85,7 @@ public class ContractManager {
 
         String sYesNo;
         sYesNo = sc.next().toUpperCase(); 
-        
+        // simple logic check 
         if (sYesNo.equals("Y") || sYesNo.equals("N")){
             if (sYesNo.equals("Y") || sYesNo.equals("y")){
                 monthlyRates.setFirstName(sFirstName);
@@ -109,6 +113,7 @@ public class ContractManager {
                     + "Y or N");
          
         String sYesNo;
+        // no need to worry about lower case y or n but put them in logic just in case
         sYesNo = sc.next().toUpperCase(); 
         
         if (sYesNo.equals("Y") || sYesNo.equals("N")){
@@ -161,6 +166,7 @@ public class ContractManager {
     
     //business or non business selector
     static void getContractLength() {
+        //charAt(5) is the last entry of the reference. It can only be a B, b or N, n
         char businessNonBusiness = monthlyRates.getReference().charAt(5);
         //business rates
         if(businessNonBusiness == 'b' || businessNonBusiness == 'B'){
@@ -174,6 +180,8 @@ public class ContractManager {
             if (iMinutes == 1){
                 //small contract
                 iMinutes = 12; 
+                // initially had these entries as strings but when came to writing to file,
+                // it was much easier and space saving to use int. 
                 monthlyRates.setContractLength(iMinutes);
                 monthlyRates.setBusinessAdjustment(businessAdjustment);
                 System.out.println("12 months with a 10% discount \n");
@@ -191,6 +199,7 @@ public class ContractManager {
                 System.out.println("24 months with a 10% discount \n");
                 getMinutes();
             }else{
+                // simple validation check. Doesn't working with letters 
                 System.out.println ("Incorrect value entered, must be between 1-3"); 
                 getContractLength(); 
             }//end of business getContractLength
@@ -242,7 +251,7 @@ public class ContractManager {
     
     //inclusive minutes
     static void getMinutes(){
-            String sMinsInput ="";
+            int iMinsInput = 0;
             System.out.println ("Please enter a number: \n"
                                 + "1: Small 300 minutes \n"
                                 + "2: Medium 600 minutes \n"
@@ -253,20 +262,20 @@ public class ContractManager {
 
             if (iPackage == 1){
                 //small contract
-                sMinsInput = "small"; 
-                monthlyRates.setPackage(sMinsInput);
+                iMinsInput = 1; 
+                monthlyRates.setPackage(iMinsInput);
                 System.out.println("small \n");
                 getInternationalCalls();
             }
             else if (iPackage == 2){
-                sMinsInput = "medium";
-                monthlyRates.setPackage(sMinsInput);
+                iMinsInput = 2;
+                monthlyRates.setPackage(iMinsInput);
                 System.out.println("medium \n");
                 getInternationalCalls();
             }
             else if (iPackage == 3) {
-                sMinsInput = "large"; 
-                monthlyRates.setPackage(sMinsInput);
+                iMinsInput = 3; 
+                monthlyRates.setPackage(iMinsInput);
                 System.out.println("large \n");
                 getInternationalCalls();
             }else{
@@ -274,12 +283,12 @@ public class ContractManager {
                 System.out.println ("Incorrect value entered, must be between 1-3"); 
                 getMinutes(); 
             }//end of if else 
-        System.out.print(sMinsInput);
         }; //end of get minutes
     
     //boolean check to see if they are included 
     static boolean getInternationalCalls() {
         char cYN = ' ';
+        //adds 15% to bill rather than deducting it
         int intCallsAdjustment = 15;
         System.out.println("Would you like international calls? Y or N \n"
                             + "1. Yes \n"
@@ -309,7 +318,7 @@ public class ContractManager {
     }
     
     static void getDataBundle(){
-            String sDataInput ="";
+            int iDataInput = 0;
             System.out.println ("Enter required Data: \n"
                                 + "1: 1GB \n"
                                 + "2: 4GB \n"
@@ -319,24 +328,23 @@ public class ContractManager {
             int iPackage = sc.nextInt();
 
             if (iPackage == 1){
-                //small contract
-                sDataInput = "1Gb"; 
-                monthlyRates.setDataBundle(sDataInput);
+                iDataInput = 1; 
+                monthlyRates.setDataBundle(iDataInput);
                 System.out.println("1GB selected \n");
                 confirmDetails();
                 }else if (iPackage == 2){
-                    sDataInput = "4GB";
-                    monthlyRates.setPackage(sDataInput);
+                    iDataInput = 2;
+                    monthlyRates.setDataBundle(iDataInput);
                     System.out.println("4GB selected \n");
                     confirmDetails();
                 }else if (iPackage == 3) {
-                    sDataInput = "8GB"; 
-                    monthlyRates.setPackage(sDataInput);
+                    iDataInput = 3; 
+                    monthlyRates.setDataBundle(iDataInput);
                     System.out.println("8GB selected \n");
                     confirmDetails();
                 }else if (iPackage == 4) {
-                    sDataInput = "Unlimited"; 
-                    monthlyRates.setPackage(sDataInput);
+                    iDataInput = 4; 
+                    monthlyRates.setDataBundle(iDataInput);
                     System.out.println("Unlimited selected \n");
                     confirmDetails();
             }else{
@@ -344,45 +352,49 @@ public class ContractManager {
                 System.out.println ("Incorrect value entered, must be between 1-3"); 
                 getMinutes(); 
             }//end of if else 
-        System.out.print(sDataInput);
+        System.out.print(iDataInput);
         }; //end of get minutes
     
     public static String getDate() {
+    String getDate;
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+    getDate = sdf.format(cal.getTime());
+    // added getter and setter to make the date easier to use elsewhere 
+    monthlyRates.setDate(getDate);
     return sdf.format(cal.getTime());
     }
     
     public int iTotalPerMonth() {
     int iTotalPerMonth = 0;
-        if (monthlyRates.getPackage().equals("small") && monthlyRates.getDataBundle().equals("1GB")){
+        if (monthlyRates.getPackage() == 1 && monthlyRates.getDataBundle() == 1){
             iTotalPerMonth = 500;
             monthlyRates.setCostPerMonth(iTotalPerMonth);
-            }else if (monthlyRates.getPackage().equals("small") && monthlyRates.getDataBundle().equals("4GB")){
+        }else if(monthlyRates.getPackage() == 1 && monthlyRates.getDataBundle() == 2){
                 iTotalPerMonth = 700;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
-            }else if (monthlyRates.getPackage().equals("small") && monthlyRates.getDataBundle().equals("8GB")){
+            }else if (monthlyRates.getPackage() == 1 && monthlyRates.getDataBundle() == 3){
                 iTotalPerMonth = 900;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
-            }else if (monthlyRates.getPackage().equals("medium") && monthlyRates.getDataBundle().equals("1GB")){
+            }else if (monthlyRates.getPackage()== 2 && monthlyRates.getDataBundle() == 1){
                 iTotalPerMonth = 650;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
-            }else if (monthlyRates.getPackage().equals("medium") && monthlyRates.getDataBundle().equals("4GB")){
+            }else if (monthlyRates.getPackage()== 2 && monthlyRates.getDataBundle() == 2){
                 iTotalPerMonth = 850;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
-            }else if (monthlyRates.getPackage().equals("medium") && monthlyRates.getDataBundle().equals("8GB")){
+            }else if (monthlyRates.getPackage()== 2 && monthlyRates.getDataBundle() == 3){
                 iTotalPerMonth = 1050;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
-            }else if (monthlyRates.getPackage().equals("large") && monthlyRates.getDataBundle().equals("1GB")){
+            }else if (monthlyRates.getPackage()== 3 && monthlyRates.getDataBundle() == 1){
                 iTotalPerMonth = 850;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
-            }else if (monthlyRates.getPackage().equals("large") && monthlyRates.getDataBundle().equals("4GB")){
+            }else if (monthlyRates.getPackage()== 3 && monthlyRates.getDataBundle() == 2){
                 iTotalPerMonth = 1050;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
-            }else if (monthlyRates.getPackage().equals("large") && monthlyRates.getDataBundle().equals("8GB")){
+            }else if (monthlyRates.getPackage()== 3 && monthlyRates.getDataBundle() == 3){
                 iTotalPerMonth = 1250;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
-            } else if (monthlyRates.getPackage().equals("large") && monthlyRates.getDataBundle().equals("unlimited")){
+            } else if (monthlyRates.getPackage()== 3 && monthlyRates.getDataBundle() == 4){
                 iTotalPerMonth = 2000;
                 monthlyRates.setCostPerMonth(iTotalPerMonth);
             }
@@ -392,9 +404,9 @@ public class ContractManager {
     static void confirmDetails() {
 
         String sAlignLeft = "| %10s %-1s %-29s | \r\n";
-        String sAlign1 = "| %10s %-12.12s %-5s %12s | \r\n";
-        String sAlign2 = "| %10s %-12.12s %-5s %12s | \r\n";
-        String sAlign3 = "| %10s %-12.12s %-5s %12s | \r\n";
+        String sAlign1 = "| %10s %-12.12s %-5s %-12s | \r\n";
+        String sAlign2 = "| %10s %-12.12s %-5s %-12s | \r\n";
+        String sAlign3 = "| %10s %-12.12s %-5s %-12s | \r\n";
         String sAlignCentre = "";        
         String sFiller = ("|                                            | \n");
         
@@ -425,8 +437,9 @@ public class ContractManager {
             }
         System.out.print(sFiller);
         System.out.format(sAlignCentre,"Discounted Monthly Charge: ","£",monthlyRates.getCostPerMonth());
+        System.out.print(sFiller);
         System.out.println("+--------------------------------------------+");
-
+        monthlyRates.writeToFileContracts();
     }   
     
     static void displaySummary() {
@@ -438,30 +451,115 @@ public class ContractManager {
         iChoice = sc.nextInt();
             if (iChoice == 1){ 
                 readFromArchive();
-            }
-                else if (iChoice == 2){
+                } else if (iChoice == 2){
                     readFromContract();
-                } 
-                else if (iChoice == 0) {
+                }else if (iChoice == 0) {
                     welcome();
-                }
-            else {
+            } else {
             System.out.println("Enter number 1, 2 or 0");
             displaySummary();
-            }     
-                
+            }            
     }
     
     static void readFromArchive(){
-        System.out.println("\nTotal number of contracts: " + monthlyRates.readFromArchive() + " \n"
-            + "Contracts with High or Unlimited data bundles: \n"
-            + "Average charge for large packages: £");
-    }
-    static void readFromContract(){
-        System.out.println("Total number of contracts: \n"
-            + "Contracts with High or Unlimited data bundles: " + monthlyRates.readFromArchive() + " \n"
-            + "Average charge for large packages: £");
+        System.out.println("\nTotal number of contracts: " + monthlyRates.readFromArchive() + "\n"
+                        + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedArchive());
+        // simple string and floating point formatting
+        System.out.format("Average charge for large packages: £%.2f ", monthlyRates.avgChargeArchive()/100);
+        // separate method for ease and code readability. 
+        monthlyRates.contractsPerMonthArchive();
     }
     
+    static void readFromContract(){
+        System.out.println("\nTotal number of contracts: " + monthlyRates.readFromContracts() + "\n"
+                        + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedContracts());
+        System.out.format("Average charge for large packages: £%.2f ", monthlyRates.avgChargeContracts()/100);
+        monthlyRates.contractsPerMonthContracts();
+    }
+    
+    static void selectedMonthSummary() {
+        String sMonth = "";
+        String sMonthCapital = "";
+        int iChoice = 0; 
+        System.out.println("\nPlease enter the first three letters\n"
+                        + "of the month you wish to search \n");
+
+        sMonth = sc.next();
+        // this takes the first Char and makes it upper case while the remaining letters and lower case
+        sMonthCapital = sMonth.substring(0, 1).toUpperCase() + sMonth.substring(1);
+        System.out.println(sMonthCapital);
+        monthlyRates.setMonth(sMonthCapital);
+        
+        //with the above validation, I was able to make this if statement, much cleaner than having to write it twice
+        //for lower case and upper case
+        if (!sMonthCapital.equals("Jan") && !sMonthCapital.equals("Feb")  && !sMonthCapital.equals("Mar") && !sMonthCapital.equals("Apr") && !sMonthCapital.equals("May")
+                && !sMonthCapital.equals("Jun") && !sMonthCapital.equals("Jul") && !sMonthCapital.equals("Aug") && !sMonthCapital.equals("Sep")
+                && !sMonthCapital.equals("Oct")  && !sMonthCapital.equals("Nov") && !sMonthCapital.equals("Dec")){
+            selectedMonthSummary(); 
+        } else {
+            selectedMonthSummary();
+        }
+        System.out.println("\nyou chose " + sMonthCapital + "\n");
+
+        System.out.println("\nwhich file would you like to read from? \n"
+            + "1. Read from Archive \n"
+            + "2. Read from Contracts \n"
+            + "0. Back to main menu \n" );
+        iChoice = sc.nextInt();
+        if (iChoice == 1){ 
+            //realised I can use getters and setters to specify which txt file to read from. This will make future
+            //code a lot shorter and neater. Won't need to write two methods for each archive and contracts
+            monthlyRates.readFromArchiveSummary();
+            System.out.println("\nTotal number of contracts: " + monthlyRates.readFromArchiveSummary() + "\n"
+                + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedMonth());
+            System.out.format("Average charge for large packages: £%.2f ", monthlyRates.averageChargeArchiveMonth()/100);
+            }else if (iChoice == 2){
+                monthlyRates.readFromContractsSummary();
+                System.out.println("\nTotal number of contracts: " + monthlyRates.readFromContractsSummary() + "\n"
+                    + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedMonthC());
+                System.out.format("Average charge for large packages: £%.2f ", monthlyRates.averageChargeContractsMonth()/100);
+            }else if (iChoice == 0) {
+                    welcome();
+        }else{
+            System.out.println("Enter number 1, 2 or 0");
+            selectedMonthSummary();
+        }
+    }
+    
+    static void searchReferenceAndName() {
+        String sInput = "";
+        String sSearch = "";
+        int iChoice = 0; 
+        System.out.println("\nPlease enter text or numbers to search\n");
+
+        sInput = sc.next();
+        // Reference are stored as upper case. The search string in class monthlyRates converts the string to upper case
+        sSearch = sInput.toUpperCase();
+        monthlyRates.setSearch(sSearch);
+        
+        System.out.println("\nyou entered " + sSearch + "\n");
+        System.out.println("\nwhich file would you like to read from? \n"
+            + "1. Read from Archive \n"
+            + "2. Read from Contracts \n"
+            + "0. Back to main menu \n" );
+        
+        iChoice = sc.nextInt();
+        if (iChoice == 1){ 
+            monthlyRates.setReadFrom("archive.txt");
+            System.out.println("\nTotal number of contracts: " + monthlyRates.readFromInputSummary() + "\n"
+                + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedMonthInput());
+            System.out.format("Average charge for large packages: £%.2f ", monthlyRates.averageChargeInput()/100);
+            }else if (iChoice == 2){
+                monthlyRates.setReadFrom("contracts.txt");
+                System.out.println("\nTotal number of contracts: " + monthlyRates.readFromInputSummary() + "\n"
+                    + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedMonthC());
+                System.out.format("Average charge for large packages: £%.2f ", monthlyRates.averageChargeContractsMonth()/100);
+            }else if (iChoice == 0) {
+                    welcome();
+        }else{
+            System.out.println("Enter number 1, 2 or 0");
+            selectedMonthSummary();
+            }
+    }
     
 }// end of program 
