@@ -248,6 +248,7 @@ public class monthlyRates {
     }
 */
 
+    //first attempt at reading from archive
     public int readFromArchive(){
     String sFile = "archive.txt";
     int iLines = 0;
@@ -269,19 +270,23 @@ public class monthlyRates {
     return iLines;
     }
 
+    //I should have made contracts and archive both static final globals
     public static final String fileNameContracts = "Contracts.txt";
 
+    
     public void writeToFileContracts(){
         BufferedWriter bReader = null;
         FileWriter fWriter = null;
 
         try {
+        // This takes all the getters and saves/ appends them to file separated by a tab space 
         String content = (getDate() + " " + getPackage() + " " + getDataBundle() + " " + getContractLength() 
                 + " " + getInternationalCalls() + " " + getReference() + " " + getCostPerMonth() 
                 + " " + getFirstName() + " " + getSecondName());
 
         fWriter = new FileWriter(fileNameContracts);
         bReader = new BufferedWriter(fWriter);
+        // the write to file part
         bReader.write(content);
 
         } catch (IOException e) {
@@ -301,10 +306,11 @@ public class monthlyRates {
         }
     }
 
+    //returns total policies which we know should be 1000
     public int fileSearchArchive(){
     int iTotalPolicies = 0;
     Scanner input = new Scanner(System.in);  
-    input = new Scanner ("contracts.txt");
+    input = new Scanner ("archive.txt");
 
         while (input.hasNext()){
             iTotalPolicies = iTotalPolicies + 1;
@@ -314,12 +320,10 @@ public class monthlyRates {
     return iTotalPolicies;
     }
     
-    public int highUnlimitedArchive() {
-    //String[] characters = new String[1024];
-    int iHighUnlimited = 0; 
     
-    String array;
-    String sMinutes;     
+    public int highUnlimitedArchive() {
+    int iHighUnlimited = 0;
+    String array, sMinutes;     
     int cMinutes;
     
     try {
@@ -327,10 +331,14 @@ public class monthlyRates {
         BufferedReader br = new BufferedReader(new FileReader("Archive.txt"));
 
         int i = 0;
+        //loop which reads through the file line by line and checks the 3rd[2] column 
         while ((sCurrentLine = br.readLine()) != null) {
+            //array is created by looking for tab spaces 
             String[] arr = sCurrentLine.split("\\s+");
             array = arr[0];
-            sMinutes = arr[2];
+            //third column off array
+            sMinutes = arr[2]; 
+            //all results are strings so need to be converted/ parsed to int
             cMinutes = Integer.parseInt(sMinutes);
                 if (cMinutes == 3 || cMinutes == 4){
                 iHighUnlimited = iHighUnlimited + 1;
@@ -401,10 +409,13 @@ public class monthlyRates {
             int i = 0;
             while ((sCurrentLine = br.readLine()) != null) {
                 String[] arr = sCurrentLine.split("\\s+");
+                // first column, the date colum
                 array = arr[0];
                 String clean; 
+                //removing the numbers 0 to 9 and the - symbol so I am left with Jan, Feb, Mar etc
                 clean = array.replaceAll("[0-9-]", "" );
                 
+                //if the string clean contrains Jan, add 1 to the int iJan
                 if ("Jan".contains(clean)) {
                         iJan++;
                     }else if ("Feb".contains(clean)){
@@ -433,6 +444,8 @@ public class monthlyRates {
                     {i++;
                     }
             }
+        // with the months being 3 characters long, it made sense to set the formatting to 3 characters for the months
+        // and the int result. Both rows are set to the right. 
         String sAlignMonths = "%3s %3s %3s %3s %3s %3s %3s %3s %3s %3s %3s %3s \r\n";
         String sAlignCount = "%3s %3s %3s %3s %3s %3s %3s %3s %3s %3s %3s %3s \r\n";;
         
@@ -445,6 +458,7 @@ public class monthlyRates {
     }
     
     public int fileSearchContracts(){
+        //searching the contracts file for total amount of policies
     int iTotalPolicies = 0;
     Scanner input = new Scanner(System.in);  
     input = new Scanner ("contracts.txt");
@@ -459,8 +473,7 @@ public class monthlyRates {
     
     public int highUnlimitedContracts() {
     int iHighUnlimited = 0; 
-    String array;
-    String sMinutes;       
+    String array, sMinutes;       
     int cMinutes;       
         
     try {
@@ -470,7 +483,6 @@ public class monthlyRates {
         int i = 0;
         while ((sCurrentLine = br.readLine()) != null) {
             String[] arr = sCurrentLine.split("\\s+");
-            
             array = arr[0];
             sMinutes = arr[2];
             cMinutes = Integer.parseInt(sMinutes);
@@ -503,7 +515,9 @@ public class monthlyRates {
             array = arr[0];
             sMinutes = arr[1];
                 iMinutes = Integer.parseInt(sMinutes);
+            //[6] is the 7th column of the text file which is the string of pence 
             sCostPerMonth = arr[6];
+                // the string needs to be parsed so we can perform maths 
                 iCostPerMonth = Integer.parseInt(sCostPerMonth);
         
                     if (iMinutes == 3) {
@@ -541,6 +555,8 @@ public class monthlyRates {
             BufferedReader br = new BufferedReader(new FileReader("contracts.txt"));
             
             int i = 0;
+            // this should have been written as a public method so I didn't have to copy and paste each time I
+            // wanted to use it
             while ((sCurrentLine = br.readLine()) != null) {
                 String[] arr = sCurrentLine.split("\\s+");
                 array = arr[0];
@@ -592,10 +608,11 @@ public class monthlyRates {
 
         try {
             FileReader contracts = new FileReader(sFile);
-
             BufferedReader bReader = new BufferedReader(contracts);
 
-            while (bReader.readLine() != null) iLines++;
+            while (bReader.readLine() != null) {
+                iLines++;
+            }
             bReader.close();
             }
 
@@ -621,7 +638,9 @@ public class monthlyRates {
                 String[] arr = sCurrentLine.split("\\s+");
                 array = arr[0];
                 sClean = array.replaceAll("[0-9-]", "" );
-                                
+
+                //_Month is the global variable which forms part of the getters and setters above. It's the users 
+                //input which has had the first letter to upper case and remaining to lower case
                 if ("Jan".contains(sClean) && "Jan".equals(_Month)) {
                     iMonthReturn++;
                     }else if ("Feb".contains(sClean) && "Feb".equals(_Month)){
@@ -658,6 +677,7 @@ public class monthlyRates {
     }
     
     public int highUnlimitedMonth(){
+        //searching the archive txt file for a specific months data
         int iHighUnlimitedMonth = 0;
         String array;
         String sMinutes = "";
@@ -673,6 +693,7 @@ public class monthlyRates {
                 String[] arr = sCurrentLine.split("\\s+");
                 array = arr[0];
                 sClean = array.replaceAll("[0-9-]", "" );
+                //[2] is the third column which has numbers 1 to 4. 3 and 4 are high or unlimited data usage 
                 sMinutes = arr[2];
                 cMinutes = Integer.parseInt(sMinutes);
                     if (cMinutes == 3 || cMinutes == 4){
@@ -719,6 +740,7 @@ public class monthlyRates {
             
     try {
         String sCurrentLine;
+        //interestingly, the filereader doesn't seem to be case sensitive! 
         BufferedReader br = new BufferedReader(new FileReader("Archive.txt"));
         int i = 0;
         int iCount = 0;
@@ -727,56 +749,49 @@ public class monthlyRates {
             String[] arr = sCurrentLine.split("\\s+");
             array = arr[0];
             sClean = array.replaceAll("[0-9-]", "" );
+            //creating a column array of minutes 
             sMinutes = arr[2];
+                // parsing minutes to int
                 iMinutes = Integer.parseInt(sMinutes);
+            //creating a column array for the pence cost of the contract
             sCostPerMonth = arr[6];
+                //parsing to int
                 iCostPerMonth = Integer.parseInt(sCostPerMonth);
         
             if (iMinutes == 3 && "Jan".contains(sClean) && "Jan".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Feb".contains(sClean) && "Feb".equals(_Month)){
+                } else if (iMinutes == 3 && "Feb".contains(sClean) && "Feb".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Mar".contains(sClean) && "Mar".equals(_Month)){
+                } else if (iMinutes == 3 && "Mar".contains(sClean) && "Mar".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Apr".contains(sClean) && "Apr".equals(_Month)){
+                }else if (iMinutes == 3 && "Apr".contains(sClean) && "Apr".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "May".contains(sClean) && "May".equals(_Month)){
+                }else if (iMinutes == 3 && "May".contains(sClean) && "May".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Jun".contains(sClean) && "Jun".equals(_Month)){
+                }else if (iMinutes == 3 && "Jun".contains(sClean) && "Jun".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Jul".contains(sClean) && "Jul".equals(_Month)){
+                }else if (iMinutes == 3 && "Jul".contains(sClean) && "Jul".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Aug".contains(sClean) && "Aug".equals(_Month)){
+                }else if (iMinutes == 3 && "Aug".contains(sClean) && "Aug".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Sep".contains(sClean) && "Sep".equals(_Month)){
+                }else if (iMinutes == 3 && "Sep".contains(sClean) && "Sep".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Oct".contains(sClean) && "Oct".equals(_Month)){
+                }else if (iMinutes == 3 && "Oct".contains(sClean) && "Oct".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Nov".contains(sClean) && "Nov".equals(_Month)){
+                }else if (iMinutes == 3 && "Nov".contains(sClean) && "Nov".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Dec".contains(sClean) && "Dec".equals(_Month)){
+                }else if(iMinutes == 3 && "Dec".contains(sClean) && "Dec".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
                 }
@@ -918,48 +933,37 @@ public class monthlyRates {
             if (iMinutes == 3 && "Jan".contains(sClean) && "Jan".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Feb".contains(sClean) && "Feb".equals(_Month)){
+                } else if (iMinutes == 3 && "Feb".contains(sClean) && "Feb".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Mar".contains(sClean) && "Mar".equals(_Month)){
+                }else if (iMinutes == 3 && "Mar".contains(sClean) && "Mar".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Apr".contains(sClean) && "Apr".equals(_Month)){
+                }else if (iMinutes == 3 && "Apr".contains(sClean) && "Apr".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "May".contains(sClean) && "May".equals(_Month)){
+                }else if (iMinutes == 3 && "May".contains(sClean) && "May".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Jun".contains(sClean) && "Jun".equals(_Month)){
+                }else if (iMinutes == 3 && "Jun".contains(sClean) && "Jun".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Jul".contains(sClean) && "Jul".equals(_Month)){
+                }else if (iMinutes == 3 && "Jul".contains(sClean) && "Jul".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Aug".contains(sClean) && "Aug".equals(_Month)){
+                }else if (iMinutes == 3 && "Aug".contains(sClean) && "Aug".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Sep".contains(sClean) && "Sep".equals(_Month)){
+                }else if (iMinutes == 3 && "Sep".contains(sClean) && "Sep".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Oct".contains(sClean) && "Oct".equals(_Month)){
+                }else if (iMinutes == 3 && "Oct".contains(sClean) && "Oct".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Nov".contains(sClean) && "Nov".equals(_Month)){
+                }else if (iMinutes == 3 && "Nov".contains(sClean) && "Nov".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
-                }
-            if (iMinutes == 3 && "Dec".contains(sClean) && "Dec".equals(_Month)){
+                }else if (iMinutes == 3 && "Dec".contains(sClean) && "Dec".equals(_Month)){
                 iAvgCharge = iAvgCharge + iCostPerMonth;
                     iCount++;
                 }
@@ -973,24 +977,34 @@ public class monthlyRates {
         return iTotal;
     }
     
+    //rather having having two methods, one for archive and one for contracts, I began to expirement with user input
     public int readFromInputSummary(){
         String arrayReference, arrayName;
         int iMonthReturn = 0;
         System.out.println("\n");
         try {
             String sCurrentLine;
+            //initially I tried (_ReadFrom+".txt" but soon realised it would be easier to set _ReadFrom as either 
+            //archive.txt or contracts.txt
+            //this would have reduced my code quite a lot if I had realised earlier on! 
             BufferedReader brContracts = new BufferedReader(new FileReader(_ReadFrom));
             
             int iLoop = 0;
             while ((sCurrentLine = brContracts.readLine()) != null) {
                 String[] arr = sCurrentLine.split("\\s+");
+                //array5 is the reference column 
                 String array5 = "";
+                //is the name column
                 String array8 = "";
+                //changes string result to upper case which makes validation shorter to write
                 array5 = arr[5].toUpperCase();
                 array8 = arr[8].toUpperCase();
+                //I struggled with this until I realised .contains() is a boolean true or false rather than string
+                // does found5 contain part of the user input? true or false 
                 boolean found5 = array5.contains(_Search);
                 boolean found8 = array8.contains(_Search);
 
+                // if some of the input is found to be true, count
                 if (found5 == true || found8 == true){                    
                     iMonthReturn++;
                 }       
@@ -1027,31 +1041,36 @@ public class monthlyRates {
                 sClean = array.replaceAll("[0-9-]", "" );
                 sMinutes = arr[2];
                 cMinutes = Integer.parseInt(sMinutes);
+                //each stages checks for requirement
+                //are the contracts high or unlimited data?
                     if (cMinutes == 3 || cMinutes == 4){
-                        if ("Jan".contains(sClean) && "Jan".equals(_Month) && found5 == true || found8 == true) {
-                            iHighUnlimitedMonth++;
-                            }else if ("Feb".contains(sClean) && "Feb".equals(_Month)){
+                        //do the referene or name contain part of the user input?
+                        if ( found5 == true || found8 == true){
+                            if ("Jan".contains(sClean) && "Jan".equals(_Month)) {
+                                    iHighUnlimitedMonth++;
+                                }else if ("Feb".contains(sClean) && "Feb".equals(_Month) ){
+                                    iHighUnlimitedMonth++;
+                                }else if ("Mar".contains(sClean) && "Mar".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                                }else if ("Apr".contains(sClean) && "Apr".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                                }else if ("May".contains(sClean) && "May".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                                }else if ("Jun".contains(sClean) && "Jun".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                                }else if ("Jul".contains(sClean) && "Jul".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                                }else if ("Aug".contains(sClean) && "Aug".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                                }else if ("Sep".contains(sClean) && "Sep".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                                }else if ("Oct".contains(sClean) && "Oct".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                                }else if ("Nov".contains(sClean) && "Nov".equals(_Month)){
+                                    iHighUnlimitedMonth++;
+                            }else if ("Dec".contains(sClean) && "Dec".equals(_Month)){
                                 iHighUnlimitedMonth++;
-                            }else if ("Mar".contains(sClean) && "Mar".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                            }else if ("Apr".contains(sClean) && "Apr".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                            }else if ("May".contains(sClean) && "May".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                            }else if ("Jun".contains(sClean) && "Jun".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                            }else if ("Jul".contains(sClean) && "Jul".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                            }else if ("Aug".contains(sClean) && "Aug".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                            }else if ("Sep".contains(sClean) && "Sep".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                            }else if ("Oct".contains(sClean) && "Oct".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                            }else if ("Nov".contains(sClean) && "Nov".equals(_Month)){
-                                iHighUnlimitedMonth++;
-                        }else if ("Dec".contains(sClean) && "Dec".equals(_Month)){
-                            iHighUnlimitedMonth++;
+                            }
                         }
                     }
                 i++;

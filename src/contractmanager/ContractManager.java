@@ -24,15 +24,15 @@ public class ContractManager {
        
     public static void main(String[] args) {
         welcome();
-/*        getFirstName();
-        getSecondName();
-        getReference(); 
-        getInternationalCalls();
-        getMinutes(); 
-        getDataBundle(); 
-        getContractLength(); 
-        confirmDetails();
-*/    }
+        //getFirstName();
+        //getSecondName();
+        //getReference(); 
+        //getInternationalCalls();
+        //getMinutes(); 
+        //getDataBundle(); 
+        //getContractLength(); 
+        //confirmDetails();
+    }
     
     //welcome menu
     static void welcome(){
@@ -199,7 +199,7 @@ public class ContractManager {
                 System.out.println("24 months with a 10% discount \n");
                 getMinutes();
             }else{
-                // simple validation check. Doesn't working with letters 
+                // simple validation check. Doesn't work with letters 
                 System.out.println ("Incorrect value entered, must be between 1-3"); 
                 getContractLength(); 
             }//end of business getContractLength
@@ -305,13 +305,13 @@ public class ContractManager {
         else if (cYN == 'N' || cYN =='n') 
         {
             validFlag = false;
-            System.out.println ("Internation calls have not been added \n");
+            System.out.println ("International calls have not been added \n");
             getDataBundle();
         }else {
             validFlag = true;
             monthlyRates.setIntCallsAdjustment(intCallsAdjustment);
             monthlyRates.setsInternationalCalls("Yes ");
-            System.out.println ("Internation calls have been added \n");      
+            System.out.println ("International calls have been added \n");      
             getDataBundle();
         }
               return true;
@@ -440,6 +440,9 @@ public class ContractManager {
         System.out.print(sFiller);
         System.out.println("+--------------------------------------------+");
         monthlyRates.writeToFileContracts();
+        System.out.println("\n");
+        
+        welcome();     
     }   
     
     static void displaySummary() {
@@ -458,7 +461,8 @@ public class ContractManager {
             } else {
             System.out.println("Enter number 1, 2 or 0");
             displaySummary();
-            }            
+            }       
+        displaySummary();
     }
     
     static void readFromArchive(){
@@ -477,17 +481,19 @@ public class ContractManager {
         monthlyRates.contractsPerMonthContracts();
     }
     
-    static void selectedMonthSummary() {
+    static void selectedMonthSummary(){
         String sMonth = "";
         String sMonthCapital = "";
         int iChoice = 0; 
+        System.out.print("\n");
         System.out.println("\nPlease enter the first three letters\n"
                         + "of the month you wish to search \n");
-
+        
         sMonth = sc.next();
         // this takes the first Char and makes it upper case while the remaining letters and lower case
+
         sMonthCapital = sMonth.substring(0, 1).toUpperCase() + sMonth.substring(1);
-        System.out.println(sMonthCapital);
+        //System.out.println(sMonthCapital); Testing
         monthlyRates.setMonth(sMonthCapital);
         
         //with the above validation, I was able to make this if statement, much cleaner than having to write it twice
@@ -495,8 +501,8 @@ public class ContractManager {
         if (!sMonthCapital.equals("Jan") && !sMonthCapital.equals("Feb")  && !sMonthCapital.equals("Mar") && !sMonthCapital.equals("Apr") && !sMonthCapital.equals("May")
                 && !sMonthCapital.equals("Jun") && !sMonthCapital.equals("Jul") && !sMonthCapital.equals("Aug") && !sMonthCapital.equals("Sep")
                 && !sMonthCapital.equals("Oct")  && !sMonthCapital.equals("Nov") && !sMonthCapital.equals("Dec")){
-            selectedMonthSummary(); 
-        } else {
+            System.out.println("That is not a valid entry. Please try again \n"
+                    + "for example: Jan, Feb, Mar, Apr etc ");
             selectedMonthSummary();
         }
         System.out.println("\nyou chose " + sMonthCapital + "\n");
@@ -513,17 +519,20 @@ public class ContractManager {
             System.out.println("\nTotal number of contracts: " + monthlyRates.readFromArchiveSummary() + "\n"
                 + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedMonth());
             System.out.format("Average charge for large packages: £%.2f ", monthlyRates.averageChargeArchiveMonth()/100);
+            selectedMonthSummary();
             }else if (iChoice == 2){
                 monthlyRates.readFromContractsSummary();
                 System.out.println("\nTotal number of contracts: " + monthlyRates.readFromContractsSummary() + "\n"
                     + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedMonthC());
                 System.out.format("Average charge for large packages: £%.2f ", monthlyRates.averageChargeContractsMonth()/100);
+                selectedMonthSummary();
             }else if (iChoice == 0) {
                     welcome();
         }else{
             System.out.println("Enter number 1, 2 or 0");
             selectedMonthSummary();
         }
+    
     }
     
     static void searchReferenceAndName() {
@@ -549,15 +558,20 @@ public class ContractManager {
             System.out.println("\nTotal number of contracts: " + monthlyRates.readFromInputSummary() + "\n"
                 + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedMonthInput());
             System.out.format("Average charge for large packages: £%.2f ", monthlyRates.averageChargeInput()/100);
+            System.out.println("\n");
+            searchReferenceAndName();
             }else if (iChoice == 2){
                 monthlyRates.setReadFrom("contracts.txt");
                 System.out.println("\nTotal number of contracts: " + monthlyRates.readFromInputSummary() + "\n"
                     + "Contracts with High or Unlimited data bundles:" + monthlyRates.highUnlimitedMonthC());
                 System.out.format("Average charge for large packages: £%.2f ", monthlyRates.averageChargeContractsMonth()/100);
+                System.out.println("\n");
+                searchReferenceAndName();
             }else if (iChoice == 0) {
                     welcome();
         }else{
             System.out.println("Enter number 1, 2 or 0");
+            System.out.println("\n");
             selectedMonthSummary();
             }
     }
