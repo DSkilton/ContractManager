@@ -250,24 +250,27 @@ public class monthlyRates {
 
     //first attempt at reading from archive
     public int readFromArchive(){
-    String sFile = "archive.txt";
-    int iLines = 0;
+        String sFile = "archive.txt";
+        int iLines = 0;
 
-        try {
-            FileReader contracts = new FileReader(sFile);
-            BufferedReader bReader = new BufferedReader(contracts);
+            try {
+                FileReader contracts = new FileReader(sFile);
+                BufferedReader bReader = new BufferedReader(contracts);
 
-            while (bReader.readLine() != null){
-            iLines++;
+                while (bReader.readLine() != null){
+                    iLines++;
+                }
             }
-        }
-        
-        catch(FileNotFoundException e) {
-            System.out.println( "Unable to open file '" + sFile + "'");
-        } catch(IOException ex) {
-            System.out.println( "Error reading file '" + sFile + "'");
+
+            catch(FileNotFoundException whateverWeWant) {
+                System.out.println( "Unable to open file '" + sFile + "'");
+                whateverWeWant.printStackTrace();
+                
+            } catch(IOException ex) {
+                System.out.println( "Error reading file '" + sFile + "'");
+                ex.printStackTrace();
             }
-    return iLines;
+        return iLines;
     }
 
     //I should have made contracts and archive both static final globals
@@ -330,7 +333,6 @@ public class monthlyRates {
         String sCurrentLine;
         BufferedReader br = new BufferedReader(new FileReader("Archive.txt"));
 
-        int i = 0;
         //loop which reads through the file line by line and checks the 3rd[2] column 
         while ((sCurrentLine = br.readLine()) != null) {
             //array is created by looking for tab spaces 
@@ -341,14 +343,13 @@ public class monthlyRates {
             //all results are strings so need to be converted/ parsed to int
             cMinutes = Integer.parseInt(sMinutes);
                 if (cMinutes == 3 || cMinutes == 4){
-                iHighUnlimited = iHighUnlimited + 1;
-                }
-            i++;
+                  iHighUnlimited = iHighUnlimited + 1;
+            }
         }
     } 
     catch (IOException e) {
         e.printStackTrace();
-        }
+    }
         return iHighUnlimited;
     }
     
@@ -454,11 +455,12 @@ public class monthlyRates {
         } 
         catch (IOException e) {
             e.printStackTrace();
-            }
+        }
     }
     
     public int fileSearchContracts(){
-        //searching the contracts file for total amount of policies
+
+    //searching the contracts file for total amount of policies
     int iTotalPolicies = 0;
     Scanner input = new Scanner(System.in);  
     input = new Scanner ("contracts.txt");
